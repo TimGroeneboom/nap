@@ -6,6 +6,7 @@
 
 // Local includes
 #include "naputils.h"
+#include "appletevent.h"
 
 // External includes
 #include <app.h>
@@ -58,6 +59,12 @@ namespace napkin
 		friend class napkin::AppletRunner;
 	public:
 		Applet(nap::Core& core) : nap::App(core)	{ }
+
+		/**
+		 * Called when the system receives an applet specific event
+		 * @param appletEvent received applet event
+		 */
+		virtual void appletMessageReceived(AppletEventPtr appletEvent) {}
 
 	protected:
 		/**

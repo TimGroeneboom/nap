@@ -1,0 +1,31 @@
+{
+    "Objects": [
+        {
+            "Type": "nap::RenderAdvancedServiceConfiguration",
+            "mID": "RenderAdvancedServiceConfiguration_1db7b06d-b9a2-4513-b459-abbed8a4edb1",
+            "ShadowDepthFormat": "D16",
+            "ShadowDepthFormatCube": "D16",
+            "EnableShadowMapping": false
+        },
+        {
+            "Type": "nap::RenderServiceConfiguration",
+            "mID": "RenderServiceConfiguration_0548ea87-329f-4426-b66f-203d8e6d8616",
+            "Headless": false,
+            "PreferredGPU": "Discrete",
+            "Layers": [
+                "VK_LAYER_KHRONOS_validation"
+            ],
+            "Extensions": [],
+            "VulkanMajor": 1,
+            "VulkanMinor": 1,
+            "AnisotropicSamples": 8,
+            "EnableHighDPI": false,
+            "EnableCompute": false,
+            "EnableCaching": false,
+            "EnableDebug": true,
+            "EnableRobustBufferAccess": false,
+            "ShowLayers": false,
+            "ShowExtensions": false
+        }
+    ]
+}

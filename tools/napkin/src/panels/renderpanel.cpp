@@ -17,6 +17,7 @@
 #include <SDL_hints.h>
 #include <sdlhelpers.h>
 #include <QThread>
+#include <appletevent.h>
 
 namespace napkin
 {
@@ -121,6 +122,11 @@ namespace napkin
 						static_cast<int>(static_cast<float>(resize_event->size().height()) * ratio),
 					};
 				nap::SDL::setWindowSize(mWindow, sdl_size);
+
+				// Update applet gui scale
+				auto scale_event = std::make_unique<napkin::SyncWindowRatioEvent>(ratio);
+				mApplet.sendEvent(std::move(scale_event));
+
 				return true;
 			}
 			case QEvent::FocusIn:

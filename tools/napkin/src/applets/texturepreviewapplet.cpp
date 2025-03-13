@@ -137,4 +137,15 @@ namespace napkin
 	{
 		mInputService->addEvent(std::move(inputEvent));
 	}
+
+
+	void TexturePreviewApplet::appletMessageReceived(AppletEventPtr appletEvent)
+	{
+		if (appletEvent->get_type().is_derived_from(RTTI_OF(napkin::SyncWindowRatioEvent)))
+		{
+			auto& sync_event = static_cast<SyncWindowRatioEvent&>(*appletEvent);
+			mGuiService->setScale(sync_event.mRatio, mGuiService->getContext(mRenderWindow));
+		}
+	}
 }
+

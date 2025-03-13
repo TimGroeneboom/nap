@@ -12,6 +12,6 @@
         "naprenderadvanced"
     ],
     "Data": "data/preview.json",
-    "ServiceConfig": "",
+    "ServiceConfig": "config.json",
     "PathMapping": "../path_mapping.json"
 }

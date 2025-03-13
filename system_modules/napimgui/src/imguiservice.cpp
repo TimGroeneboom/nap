@@ -423,6 +423,22 @@ namespace nap
 	}
 
 
+	void IMGuiService::setScale(float scale, const ImGuiContext* context)
+	{
+		// Check if service doesn't already exist
+		const auto& found_it = std::find_if(mContexts.begin(), mContexts.end(), [&context](const auto& it) 
+			{
+				return it.second->mContext == context;
+			});
+		assert(found_it != mContexts.end());
+		assert(found_it->second != nullptr);
+		assert(found_it->second->mDisplay != nullptr);
+
+		mGuiScale = scale;
+		pushScale(*found_it->second, *found_it->second->mDisplay);
+	}
+
+
 	ImGuiContext* IMGuiService::processInputEvent(const InputEvent& event)
 	{
 		// Check if it's a window input event
@@ -929,6 +945,7 @@ namespace nap
 			context.activate();
 			ImGui::GetStyle() = *context.mStyle;
 			ImGui::GetStyle().ScaleAllSizes(mGuiScale);
+			ImGui::GetIO().FontGlobalScale = mGuiScale;
 			context.deactivate();
 
 			// Store scale, ensures custom widgets can scale accordingly

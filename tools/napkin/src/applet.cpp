@@ -19,6 +19,7 @@ namespace napkin
 		return applet_ext.switchWorkingDir();
 	}
 
+
 	const nap::ProjectInfo* Applet::getEditorInfo() const
 	{
 		const auto& applet_ext = getCore().getExtension<AppletExtension>();

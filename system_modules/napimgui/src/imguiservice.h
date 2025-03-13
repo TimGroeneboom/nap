@@ -163,7 +163,7 @@ namespace nap
 		ImGuiContext* findContext(int windowID);
 
 		/**
-		 * Returns the scaling factor of the current active context.
+		 * Returns the overall scaling factor of the current active context.
 		 * The scaling factor is calculated using the display DPI (if high DPI rendering is enabled)
 		 * and the global GUI scale.
 		 * @return the scaling factor for the current active context, -1.0 if no context is active
@@ -178,6 +178,13 @@ namespace nap
 		 * @return the scaling factor for the given context
 		 */
 		float getScale(const ImGuiContext* context) const;
+
+		/**
+		 * Sets the overall gui scaling factor.
+		 * @param scale new gui scaling factor
+		 * @param context 
+		 */
+		void setScale(float scale, const ImGuiContext* context);
 
 		/**
 		 * Returns the GUI color palette.

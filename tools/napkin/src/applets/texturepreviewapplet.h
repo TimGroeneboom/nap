@@ -81,6 +81,11 @@ namespace napkin
 		 */
 		void inputMessageReceived(InputEventPtr inputEvent) override;
 
+		/**
+		 * Called when the app receives an applet message (from qt)
+		 */
+		void appletMessageReceived(AppletEventPtr appletEvent) override;
+
 	private:
 		ResourceManager*  mResourceManager = nullptr;					//< Manages all the loaded data
 		RenderService* mRenderService = nullptr;						//< Render Service that handles render calls

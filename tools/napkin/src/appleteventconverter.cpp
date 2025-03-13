@@ -472,11 +472,6 @@ namespace napkin
 
 	float AppletEventConverter::getPixelRatio() const
 	{
-#ifdef __linux__
-		return QGuiApplication::platformName() == "xcb" ?
-			static_cast<float>(mQWindow->devicePixelRatio()) : 1.0f;
-#else
-		return 1.0f;
-#endif
+		return static_cast<float>(mQWindow->devicePixelRatio());
 	}
 }

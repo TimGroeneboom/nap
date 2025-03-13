@@ -227,6 +227,13 @@ namespace napkin
 				applet.windowMessageReceived(std::unique_ptr<nap::WindowEvent>(window_event));
 			}
 
+			// Applet event
+			else if (event_ref->get_type().is_derived_from(RTTI_OF(napkin::AppletEvent)))
+			{
+				auto* applet_event = static_cast<napkin::AppletEvent*>(event_ref.release());
+				applet.appletMessageReceived(std::unique_ptr<napkin::AppletEvent>(applet_event));
+			}
+
 			// API event
 			else if (event_ref->get_type().is_derived_from(RTTI_OF(nap::APIEvent)))
 			{
