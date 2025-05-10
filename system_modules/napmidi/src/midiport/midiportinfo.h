@@ -15,7 +15,7 @@ namespace nap
     /**
      * Helper class to poll rtmidi for available input and output ports
      */
-    class MidiPortInfo final
+    class NAPAPI MidiPortInfo final
     {
     public:
         /**

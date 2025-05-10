@@ -7,6 +7,8 @@
 // Nap includes
 #include <nap/signalslot.h>
 
+#include <atomic>
+
 namespace nap
 {
 	namespace audio
