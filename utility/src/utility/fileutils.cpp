@@ -83,6 +83,7 @@ namespace nap
 			return true;
 		}
 
+
 		bool isAbsolutePath(const std::string& path)
 		{
 			if (path.empty())
@@ -294,6 +295,21 @@ namespace nap
 				return false;
 
 			modTime = result.st_mtime;
+			return true;
+		}
+
+
+		bool getFileCreationTime(const std::string& path, uint64_t& modTime)
+		{
+			struct stat result;
+			if (stat(path.c_str(), &result) != 0)
+				return false;
+
+			// Fail if not a file
+			if ((result.st_mode & S_IFMT) == 0)
+				return false;
+
+			modTime = result.st_ctime;
 			return true;
 		}
 

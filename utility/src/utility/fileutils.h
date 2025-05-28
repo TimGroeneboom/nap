@@ -168,6 +168,15 @@ namespace nap
 		bool getFileModificationTime(const std::string& path, uint64_t& modTime);
 
 		/**
+		 * Get the creation time of the specified path
+		 *
+		 * @param path The path to the file
+		 * @param modTime The creation time of the file
+		 * @return Whether file creation time was successfully retrieved
+		 */
+		bool getFileCreationTime(const std::string& path, uint64_t& modTime);
+
+		/**
 		 * @return the full path to the executable including the application name
 		 */
 		std::string getExecutablePath();
