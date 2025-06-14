@@ -82,7 +82,7 @@ namespace nap
 				/**
 				 * The sample rate the audio stream will run on, the number of samples processed per channel per second.
                  */
-                float mSampleRate = 44100;
+                float mSampleRate = 96000.0f;
 
                 /**
                  * The buffer size the audio stream will run on, every audio callback processes this amount of samples per channel
