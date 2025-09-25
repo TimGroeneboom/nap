@@ -113,6 +113,9 @@ if (NAP_AUDIOFILE_SUPPORT)
     else()
         set(MODULE_NAME_EXTRA_LIB "libmpg123;libsndfile")
 
+        set(INCLUDES ${LIBSNDFILE_INCLUDE_DIR} ${LIBMPG123_INCLUDE_DIR})
+        target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDES})
+
         if(NOT TARGET moodycamel)
             find_package(moodycamel REQUIRED)
         endif()
