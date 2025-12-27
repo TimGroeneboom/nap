@@ -265,6 +265,121 @@ namespace nap
 	}
 
 
+	bool BitmapFileBuffer::loadFromBuffer(const char* data, size_t length, SurfaceDescriptor& outSurfaceDescriptor, utility::ErrorState& errorState)
+	{
+		// Unload existing data
+		if (mBitmapHandle != nullptr)
+		{
+			FIBITMAP* fi_bitmap = reinterpret_cast<FIBITMAP*>(mBitmapHandle);
+			FreeImage_Unload(fi_bitmap);
+		}
+
+		// Open memory stream
+		FIMEMORY* fi_mem = FreeImage_OpenMemory((BYTE*)data, length);
+		if(!errorState.check(fi_mem != nullptr, "Unable to load bitmap from memory"))
+			return false;
+
+		// Determine format
+		FREE_IMAGE_FORMAT fi_img_format = FreeImage_GetFileTypeFromMemory(fi_mem, 0);
+		if (!errorState.check(fi_img_format != FIF_UNKNOWN, "Unable to determine image format of data"))
+			return false;
+
+		// Load bitmap from memory
+		FIBITMAP *fi_bitmap = FreeImage_LoadFromMemory(fi_img_format, fi_mem, 0);
+		if (!errorState.check(fi_bitmap != nullptr, "Unable to load bitmap from memory"))
+		{
+			FreeImage_Unload(fi_bitmap);
+			return false;
+		}
+
+		// Get associated bitmap type for free image type
+		FREE_IMAGE_TYPE fi_bitmap_type = FreeImage_GetImageType(fi_bitmap);
+
+		ESurfaceDataType data_type;
+		switch (fi_bitmap_type)
+		{
+		case FIT_BITMAP:
+			data_type = ESurfaceDataType::BYTE;
+			break;
+		case FIT_UINT16:
+		case FIT_RGB16:
+		case FIT_RGBA16:
+			data_type = ESurfaceDataType::USHORT;
+			break;
+		case FIT_FLOAT:
+		case FIT_RGBF:
+		case FIT_RGBAF:
+			data_type = ESurfaceDataType::FLOAT;
+			break;
+		default:
+			errorState.fail("Can't load bitmap from file; unknown pixel format");
+			FreeImage_Unload(fi_bitmap);
+			return false;
+		}
+
+		// Get color type
+		FREE_IMAGE_COLOR_TYPE fi_bitmap_color_type = FreeImage_GetColorType(fi_bitmap);
+
+		// Convert RGB to RGBA
+		if (fi_bitmap_color_type == FIC_RGB)
+		{
+			FIBITMAP* converted_bitmap = nullptr;
+			switch (data_type)
+			{
+			case ESurfaceDataType::BYTE:
+				converted_bitmap = FreeImage_ConvertTo32Bits(fi_bitmap);
+				break;
+			case ESurfaceDataType::USHORT:
+				converted_bitmap = FreeImage_ConvertToRGBA16(fi_bitmap);
+				break;
+			case ESurfaceDataType::FLOAT:
+				converted_bitmap = FreeImage_ConvertToRGBAF(fi_bitmap);
+				break;
+			default:
+				errorState.fail("Can't load bitmap from file; unknown pixel format");
+				FreeImage_Unload(fi_bitmap);
+				return false;
+			}
+
+			if (!errorState.check(converted_bitmap != NULL, "Failed to convert RGB image to RGBA bitmap"))
+				return false;
+
+			FreeImage_Unload(fi_bitmap);
+			fi_bitmap = converted_bitmap;
+			fi_bitmap_color_type = FIC_RGBALPHA;
+		}
+
+		// If we're dealing with an rgb or rgba map and a bitmap
+		// The endian of the loaded free image map becomes important
+		// If so we might have to swap the red and blue channels regarding the internal color representation
+		bool swap_ra = (fi_bitmap_type == FREE_IMAGE_TYPE::FIT_BITMAP && FI_RGBA_RED == 2);
+
+		ESurfaceChannels channels;
+		switch (fi_bitmap_color_type)
+		{
+		case FIC_MINISBLACK:
+			channels = ESurfaceChannels::R;
+			break;
+		case FIC_RGBALPHA:
+			channels = swap_ra ? ESurfaceChannels::BGRA : ESurfaceChannels::RGBA;
+			break;
+		default:
+			errorState.fail("Can't load bitmap from file; unknown pixel format");
+			FreeImage_Unload(fi_bitmap);
+			return false;
+		}
+
+		// Set the surface descriptor
+		outSurfaceDescriptor.mWidth = FreeImage_GetWidth(fi_bitmap);
+		outSurfaceDescriptor.mHeight = FreeImage_GetHeight(fi_bitmap);
+		outSurfaceDescriptor.mDataType = data_type;
+		outSurfaceDescriptor.mChannels = channels;
+
+		mBitmapHandle = fi_bitmap;
+		return true;
+	}
+
+
 	bool BitmapFileBuffer::save(const std::string& path, utility::ErrorState& errorState)
 	{
 		// Ensure the bitmap data is allocated

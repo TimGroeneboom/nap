@@ -45,6 +45,16 @@ namespace nap
 		virtual bool init(utility::ErrorState& errorState) override;
 
 		/**
+		 * Initializes this bitmap from data. The settings associated with
+		 * this bitmap will match the settings loaded from data. If you want
+		 * to manually allocate pixel data call init() without a path.
+		 * @param data the data containing the image
+		 * @param errorState contains the error if the image could not be loaded
+		 * @return true if the bitmap loaded successfully
+		 */
+		virtual bool initFromData(const char* data, size_t length, nap::utility::ErrorState& errorState);
+
+		/**
 		 * Initializes this bitmap from file. The settings associated with
 		 * this bitmap will match the settings loaded from file. If you want
 		 * to manually allocate pixel data call init() without a path.

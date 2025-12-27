@@ -151,6 +151,8 @@ if (NAP_AUDIOFILE_SUPPORT)
             # Install libsndfile into packaged app
             file(GLOB SNDFILE_DYLIBS ${module_thirdparty}/libsndfile/${NAP_THIRDPARTY_PLATFORM_DIR}/${ARCH}/lib/*snd*${CMAKE_SHARED_LIBRARY_SUFFIX}*)
             install(FILES ${SNDFILE_DYLIBS} DESTINATION lib)
+
+            target_link_libraries(${PROJECT_NAME} ${MPG123_DYLIBS} ${SNDFILE_DYLIBS})
         endif()
 
         # Install thirdparty licenses into packaged project

@@ -79,6 +79,16 @@ namespace nap
 		bool load(const std::string& path, SurfaceDescriptor& outSurfaceDescriptor, utility::ErrorState& errorState);
 
 		/**
+		 * Loads an image from data
+		 * @param data the raw data
+		 * @param outSurfaceDescriptor the surface descriptor containing information about the image
+		 * @param errorState contains the error if the image could not be loaded from disk
+		 * @return true on success
+		 */
+		bool loadFromBuffer(const char* data, size_t length, SurfaceDescriptor& outSurfaceDescriptor, utility::ErrorState& errorState);
+
+
+		/**
 		 * Writes this bitmap to the given location on disk with the specified image format
 		 * @param path the path including filename and image extension of the output file e.g. "targetFolder/MyOutputFile.png"
 		 * @param errorState contains the error if the image could not be saved to disk

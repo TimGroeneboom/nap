@@ -154,6 +154,27 @@ namespace nap
 	}
 
 
+	bool Bitmap::initFromData(const char* data, size_t length, nap::utility::ErrorState& errorState)
+	{
+		BitmapFileBuffer file_buffer;
+		if (!file_buffer.loadFromBuffer(data, length, mSurfaceDescriptor, errorState))
+		{
+			errorState.fail("Failed to load bitmap from data");
+			return false;
+		}
+
+		updatePixelFormat();
+		mData.resize(getSizeInBytes());
+		copyImageData(
+			(const uint8*)file_buffer.getData(), mSurfaceDescriptor.getPitch(), mSurfaceDescriptor.getChannels(),
+			mData.data(), mSurfaceDescriptor.getPitch(), mSurfaceDescriptor.getChannels(),
+			getWidth(), getHeight());
+
+		return true;
+	}
+
+
+
 	bool Bitmap::initFromFile(const std::string& path, nap::utility::ErrorState& errorState)
 	{
 		BitmapFileBuffer file_buffer;
