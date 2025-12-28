@@ -510,6 +510,19 @@ namespace nap
 		if (it != mDescriptors.end())
 			return (ImTextureID)(it->second);
 
+		// ?
+		auto* texture_ptr = const_cast<Texture2D *>(&texture);
+		texture_ptr->textureDestroyed.connect([this, texture_ptr]()
+		{
+			auto it = mDescriptors.find(texture_ptr);
+			if (it != mDescriptors.end())
+			{
+				if (vkFreeDescriptorSets(mRenderService->getDevice(), mDescriptorPool,1, &it->second) != VK_SUCCESS)
+					nap::Logger::error("Failed to free descriptor pool");
+				mDescriptors.erase(it);
+			}
+		});
+
 		// Allocate new description set
 		VkDescriptorSet descriptor_set = mAllocator->allocate(mDescriptorSetLayout, 0, 0, 1);
 
@@ -531,6 +544,7 @@ namespace nap
 		mDescriptors.emplace(std::make_pair(&texture, descriptor_set));
 		return (ImTextureID)(descriptor_set);
 	}
+
 
 
 	nap::Icon& IMGuiService::getIcon(std::string&& name)
