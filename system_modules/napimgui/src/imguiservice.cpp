@@ -503,47 +503,46 @@ namespace nap
 	}
 
 
-	ImTextureID IMGuiService::getTextureHandle(const nap::Texture2D& texture) const
+ImTextureID IMGuiService::getTextureHandle(const nap::Texture2D& texture) const
+{
+	// Check if the texture has been requested before
+	auto it = mDescriptors.find(&texture);
+	if (it != mDescriptors.end())
+		return (ImTextureID)(it->second);
+
+	// TODO : hack to make sure descriptor set allocated is freed after texture is destroyed
+	texture.textureDestroyed.connect([this, &texture]()
 	{
-		// Check if the texture has been requested before
 		auto it = mDescriptors.find(&texture);
 		if (it != mDescriptors.end())
-			return (ImTextureID)(it->second);
-
-		// ?
-		auto* texture_ptr = const_cast<Texture2D *>(&texture);
-		texture_ptr->textureDestroyed.connect([this, texture_ptr]()
 		{
-			auto it = mDescriptors.find(texture_ptr);
-			if (it != mDescriptors.end())
-			{
-				if (vkFreeDescriptorSets(mRenderService->getDevice(), mDescriptorPool,1, &it->second) != VK_SUCCESS)
-					nap::Logger::error("Failed to free descriptor pool");
-				mDescriptors.erase(it);
-			}
-		});
+			if (vkFreeDescriptorSets(mRenderService->getDevice(), mDescriptorPool,1, &it->second) != VK_SUCCESS)
+				nap::Logger::error("Failed to free descriptor pool");
+			mDescriptors.erase(it);
+		}
+	});
 
-		// Allocate new description set
-		VkDescriptorSet descriptor_set = mAllocator->allocate(mDescriptorSetLayout, 0, 0, 1);
+	// Allocate new description set
+	VkDescriptorSet descriptor_set = mAllocator->allocate(mDescriptorSetLayout, 0, 0, 1);
 
-		// Update description set
-		VkDescriptorImageInfo desc_image[1] = {};
-		desc_image[0].sampler = mSampler;
-		desc_image[0].imageView = texture.getHandle().getView();
-		desc_image[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	// Update description set
+	VkDescriptorImageInfo desc_image[1] = {};
+	desc_image[0].sampler = mSampler;
+	desc_image[0].imageView = texture.getHandle().getView();
+	desc_image[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-		// Create write structure and update  descriptor set
-		VkWriteDescriptorSet write_desc[1] = {};
-		write_desc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write_desc[0].dstSet = descriptor_set;
-		write_desc[0].descriptorCount = 1;
-		write_desc[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		write_desc[0].pImageInfo = desc_image;
+	// Create write structure and update  descriptor set
+	VkWriteDescriptorSet write_desc[1] = {};
+	write_desc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	write_desc[0].dstSet = descriptor_set;
+	write_desc[0].descriptorCount = 1;
+	write_desc[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	write_desc[0].pImageInfo = desc_image;
 
-		vkUpdateDescriptorSets(mRenderService->getDevice(), 1, write_desc, 0, NULL);
-		mDescriptors.emplace(std::make_pair(&texture, descriptor_set));
-		return (ImTextureID)(descriptor_set);
-	}
+	vkUpdateDescriptorSets(mRenderService->getDevice(), 1, write_desc, 0, NULL);
+	mDescriptors.emplace(std::make_pair(&texture, descriptor_set));
+	return (ImTextureID)(descriptor_set);
+}
 
 
 

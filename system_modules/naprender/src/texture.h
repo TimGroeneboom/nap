@@ -79,8 +79,7 @@ namespace nap
 		 */
 		virtual void onDestroy() override						{ textureDestroyed(); }
 
-		nap::Signal<> textureDestroyed;							///< Signal that is triggered before texture is destroyed
-
+		mutable nap::Signal<> textureDestroyed;					///< Signal that is triggered before texture is destroyed
 	protected:
 		/**
 		 * @return Vulkan GPU data handle, including image and view.
