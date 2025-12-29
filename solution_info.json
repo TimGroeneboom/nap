@@ -2,5 +2,11 @@
     "Type": "nap::SolutionInfo",
     "mID": "SolutionInfo",
     "AdditionalTargets": [
+        "apps/timecoder",
+        "modules/napappgui",
+        "modules/napaudioadvanced",
+        "modules/naplibtag",
+        "modules/napmessage",
+        "modules/napxwax"
     ]
 }
