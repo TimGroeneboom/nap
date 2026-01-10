@@ -27,7 +27,7 @@ namespace nap
 		{
 			mWindowSizeInSamples = getNodeManager().getSamplesPerMillisecond() * mAnalysisWindowSize;
 			mSquaredBuffer.resize(mWindowSizeInSamples);
-            
+            mType = EType::PEAK;
 			if (rootProcess)
 				getNodeManager().registerRootProcess(*this);
 		}
